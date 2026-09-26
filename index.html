@@ -364,8 +364,7 @@
   .sheet {
     background: var(--ground); width: 100%; max-width: 620px; max-height: 90vh;
     overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
-    border-radius: 20px 20px 0 0; padding: 20px 18px calc(22px + 9.4vh + env(safe-area-inset-bottom));
-    padding-bottom: calc(22px + 9.4svh + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0; padding: 20px 18px calc(32px + env(safe-area-inset-bottom));
   }
   .sheet::before {
     content: ''; display: block; width: 36px; height: 4px; border-radius: 3px;
@@ -385,10 +384,9 @@
   .exedit .kill { background: none; border: none; color: var(--muted); font-size: 16px; padding: 4px 0; }
   .addex { width: 100%; background: var(--panel); border: none; color: var(--cobalt); border-radius: var(--radius-sm); padding: 11px; font-size: 13px; font-weight: 600; margin-top: 4px; }
 
-  /* ===== barre d'onglets — flottante, décollée du bord du bas ===== */
+  /* ===== barre d'onglets — collée au bord du bas ===== */
   .tabs {
-    position: fixed; left: 12px; right: 12px; bottom: calc(9.4vh + env(safe-area-inset-bottom));
-    bottom: calc(9.4svh + env(safe-area-inset-bottom));
+    position: fixed; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom));
     z-index: 20; border-radius: 24px;
     background: color-mix(in srgb, var(--panel) 94%, transparent);
     -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
@@ -406,8 +404,7 @@
 
   .toast {
     position: fixed; left: 50%; transform: translateX(-50%);
-    bottom: calc(90px + 9.4vh + env(safe-area-inset-bottom));
-    bottom: calc(90px + 9.4svh + env(safe-area-inset-bottom));
+    bottom: calc(100px + env(safe-area-inset-bottom));
     background: var(--bone); color: var(--ground); padding: 10px 18px; border-radius: 999px;
     font-size: 13.5px; font-weight: 600; z-index: 40; opacity: 0; pointer-events: none;
     transition: opacity 0.2s ease; max-width: 86vw; text-align: center;
@@ -419,8 +416,7 @@
      donc rien au-dessus (barre Claude, Safari) ne se réduit ou ne se déplace ===== */
   html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
   #appScroll { height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
-    padding-bottom: calc(148px + 9.4vh + env(safe-area-inset-bottom));
-    padding-bottom: calc(148px + 9.4svh + env(safe-area-inset-bottom));
+    padding-bottom: calc(148px + env(safe-area-inset-bottom));
   }
 </style>
 </head>
