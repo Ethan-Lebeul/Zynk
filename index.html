@@ -602,6 +602,11 @@
       h = Math.max(vv, window.screen.height);
     }
     appRoot.style.height = h + 'px';
+    // body/html étaient limités à height:100% + overflow:hidden — si ce 100%
+    // était lui-même trop court, il rognait #appRoot même une fois agrandi.
+    // On leur applique la même hauteur mesurée pour lever ce plafond.
+    document.documentElement.style.height = h + 'px';
+    document.body.style.height = h + 'px';
   }
   fixAppHeight();
   window.addEventListener('resize', fixAppHeight);
