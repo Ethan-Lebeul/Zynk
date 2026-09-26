@@ -389,7 +389,7 @@
 
   /* ===== barre d'onglets — collée au bord du bas ===== */
   .tabs {
-    position: fixed; left: 12px; right: 12px; bottom: 0;
+    position: absolute; left: 12px; right: 12px; bottom: 0;
     z-index: 20; border-radius: 24px;
     background: color-mix(in srgb, var(--panel) 94%, transparent);
     -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
@@ -418,12 +418,15 @@
   /* ===== conteneur de défilement interne — la page elle-même ne bouge jamais,
      donc rien au-dessus (barre Claude, Safari) ne se réduit ou ne se déplace ===== */
   html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
+  #appRoot { position: relative; height: 100vh; height: 100dvh; }
   #appScroll { height: 100%; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain;
     padding-bottom: calc(148px + env(safe-area-inset-bottom));
   }
 </style>
 </head>
 <body>
+
+<div id="appRoot">
 
 <div id="appScroll">
 
@@ -524,6 +527,8 @@
   <button class="tab" data-tab="recettes"><span class="glyph" id="tabIconRecettes"></span>Recettes</button>
 </nav>
 
+</div>
+
 
 <div class="veil" id="veil">
   <div class="sheet">
@@ -580,6 +585,22 @@
 <div class="toast" id="toast"></div>
 
 <script>
+(function() {
+  // iOS (surtout en app plein écran ajoutée à l'écran d'accueil) calcule parfois
+  // mal la hauteur de la fenêtre pour les éléments "position:fixed" — on mesure
+  // la vraie hauteur visible et on la fige en pixels sur #appRoot pour que la
+  // barre d'onglets (position:absolute dedans) tombe pile au bord du bas.
+  var appRoot = document.getElementById('appRoot');
+  function fixAppHeight() {
+    if (!appRoot) return;
+    var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    appRoot.style.height = h + 'px';
+  }
+  fixAppHeight();
+  window.addEventListener('resize', fixAppHeight);
+  window.addEventListener('orientationchange', function(){ setTimeout(fixAppHeight, 60); setTimeout(fixAppHeight, 300); });
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', fixAppHeight);
+})();
 (function() {
   var LS = 'vestiaire-v1';
   var DAYS = ['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
