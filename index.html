@@ -593,7 +593,14 @@
   var appRoot = document.getElementById('appRoot');
   function fixAppHeight() {
     if (!appRoot) return;
-    var h = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    var vv = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    var h = vv;
+    // En PWA plein écran sur iOS (ajoutée à l'écran d'accueil), innerHeight /
+    // visualViewport exclut parfois la hauteur de la barre de statut : dans ce
+    // cas, screen.height (la vraie taille de l'écran) est plus fiable.
+    if (window.navigator.standalone && window.screen && window.screen.height) {
+      h = Math.max(vv, window.screen.height);
+    }
     appRoot.style.height = h + 'px';
   }
   fixAppHeight();
