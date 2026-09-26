@@ -434,7 +434,7 @@
   <h1 class="wordmark" id="wordmark">Zynk</h1>
   <div style="display:flex;align-items:center;gap:8px;">
     <button class="sync themebtn" id="themeBtn" aria-label="Changer de thème"><span id="themeIcon"></span></button>
-    <button class="sync" id="syncBtn"><span class="sync-dot" id="syncDot"></span><span id="syncTxt">Connexion</span></button>
+    <button class="sync" id="syncBtn"><span class="sync-dot" id="syncDot"></span><span id="syncTxt">Sur l'appareil</span></button>
   </div>
 </div>
 
@@ -745,8 +745,8 @@
   }
 
   var data = freshData();
-  var cloud = null;          // DocumentReference
-  var cloudState = 'wait';   // wait | on | off
+  var cloud = null;          // DocumentReference — jamais utilisé hors de l'artifact Claude
+  var cloudState = 'off';    // off | on (le mode "wait" n'a plus lieu d'être en site autonome)
   var localOK = false;
   var pending = false, writing = false, flushTimer = null;
 
@@ -790,7 +790,6 @@
     var txt = document.getElementById('syncTxt');
     dot.classList.remove('on','off');
     if (cloudState === 'on') { dot.classList.add('on'); txt.textContent = 'Sauvegardé'; }
-    else if (cloudState === 'wait') { txt.textContent = 'Connexion'; }
     else if (localOK) { txt.textContent = 'Sur l\'appareil'; }
     else { dot.classList.add('off'); txt.textContent = 'Non sauvegardé'; }
   }
@@ -804,50 +803,7 @@
 
   var local = readLocal();
   if (local) data = normalize(local);
-
-  function waitForClaude(ms) {
-    return new Promise(function(res) {
-      var t0 = Date.now();
-      (function tick() {
-        if (window.claude && typeof window.claude.use === 'function') return res(window.claude);
-        if (Date.now() - t0 > ms) return res(null);
-        setTimeout(tick, 250);
-      })();
-    });
-  }
-
-  (async function boot() {
-    var c = await waitForClaude(12000);
-    if (!c) { cloudState = 'off'; paintSync(); return; }
-    var db = null;
-    try { db = await c.use('db'); } catch (e) { db = null; }
-    if (!db) { cloudState = 'off'; paintSync(); return; }
-    try {
-      var ref = db.doc('state/main');
-      var snap = await ref.get();
-      var body = (snap && snap.exists && typeof snap.data === 'function') ? snap.data() : null;
-      if (body && typeof body.payload === 'string') {
-        var remote = null;
-        try { remote = JSON.parse(body.payload); } catch (err) { remote = null; }
-        if (remote) {
-          data = normalize(remote);
-          writeLocal();
-          paintName();
-          applyTheme();
-          renderWeek();
-          renderPrograms();
-        }
-      } else {
-        await ref.set({ payload: JSON.stringify(data), updatedAt: Date.now() });
-      }
-      cloud = ref;
-      cloudState = 'on';
-    } catch (e) {
-      cloud = null;
-      cloudState = 'off';
-    }
-    paintSync();
-  })();
+  paintSync();
 
   // ---------------- navigation ----------------
   var selectedDay = DAYS[(new Date().getDay() + 6) % 7];
